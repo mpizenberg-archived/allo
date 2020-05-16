@@ -18,6 +18,14 @@ function SignalingSocket(socketAddress) {
   // Create the WebSocket object.
   const socket = new WebSocket(socketAddress);
 
+  // Prevent time out with regular ping-pong exchanges.
+  (function ping(ms) {
+    setTimeout(() => {
+      socket.send(JSON.stringify("ping"));
+      ping(ms);
+    }, ms);
+  })(10000);
+
   // Callback for each remote peer also connected.
   this.onRemotePeerConnected = undefined;
 
@@ -47,7 +55,9 @@ function SignalingSocket(socketAddress) {
   // the ICE candidate or the description callback.
   socket.onmessage = (jsonMsg) => {
     let msg = JSON.parse(jsonMsg.data);
-    if (msg.msgType == "greet") {
+    if (msg == "pong") {
+      console.log("pong");
+    } else if (msg.msgType == "greet") {
       let chan = addChannel(msg.remotePeerId);
       this.onRemotePeerConnected(chan, msg.polite);
     } else if (msg.msgType == "left") {

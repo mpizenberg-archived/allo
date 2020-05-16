@@ -22,7 +22,10 @@ wss.on("connection", (ws, req) => {
   console.log("Connection of " + req.connection.remoteAddress);
   ws.on("message", (jsonMsg) => {
     let msg = JSON.parse(jsonMsg);
-    if (msg.msgType == "join") {
+    if (msg == "ping") {
+      console.log("ping from", req.connection.remoteAddress);
+      ws.send(JSON.stringify("pong"));
+    } else if (msg.msgType == "join") {
       console.log("join", idCount);
       // Greet each pair of peers on both sides.
       for (let [id, sock] of peersSocks) {
@@ -40,7 +43,10 @@ wss.on("connection", (ws, req) => {
       relay(ws, msg);
     }
   });
-  ws.on("close", () => leave(ws));
+  ws.on("close", () => {
+    console.log("WebSocket closing");
+    leave(ws);
+  });
 });
 
 function leave(ws) {
