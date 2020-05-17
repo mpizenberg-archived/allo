@@ -22,7 +22,8 @@ const stream_config = {
 };
 const socket_address = "wss://" + window.location.host;
 // const ice_config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
-const ice_config = { iceServers: [{ urls: "stun:51.255.46.225:3478" }] };
+const hostname = window.location.hostname;
+const ice_config = { iceServers: [{ urls: "stun:" + hostname + ":3478" }] };
 
 // INIT ##############################################################
 
