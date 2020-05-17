@@ -4,11 +4,13 @@ const remote_videos = document.getElementById("remote-videos");
 const join_button = document.getElementById("join-button");
 const leave_button = document.getElementById("leave-button");
 const mute_button = document.getElementById("mute-button");
+const hide_button = document.getElementById("hide-button");
 
 // Set callback functions for when the buttons are clicked
 join_button.onclick = joinCall;
 leave_button.onclick = leaveCall;
 mute_button.onclick = mute;
+hide_button.onclick = hide;
 
 // Other global variables
 let local_stream;
@@ -97,4 +99,12 @@ function mute() {
   let audio_track = local_stream.getAudioTracks()[0];
   audio_track.enabled = !audio_track.enabled;
   mute_button.textContent = audio_track.enabled ? "Mute" : "Unmute";
+}
+
+// VIDEO HIDE/SHOW ###################################################
+
+function hide() {
+  let video_track = local_stream.getVideoTracks()[0];
+  video_track.enabled = !video_track.enabled;
+  hide_button.textContent = video_track.enabled ? "Hide" : "Show";
 }
