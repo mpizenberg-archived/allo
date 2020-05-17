@@ -14,8 +14,10 @@ let signalingSocket;
 let pcs = new Map();
 
 // Configuration
-// const stream_config = { audio: true, video: { width: 320, height: 240 } }
-const stream_config = { audio: true, video: true };
+const stream_config = {
+  audio: true,
+  video: { facingMode: "user", frameRate: 15, width: 320, height: 240 },
+};
 const socket_address = "wss://" + window.location.host;
 // const ice_config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 const ice_config = { iceServers: [{ urls: "stun:51.255.46.225:3478" }] };
