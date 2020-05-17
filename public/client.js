@@ -46,7 +46,7 @@ function initSignalingAndPC() {
     const remote_video = document.createElement("video");
     remote_video.id = chan.remotePeerId.toString();
     remote_video.setAttribute("autoplay", "autoplay");
-    remote_video.setAttribute("controls", "controls");
+    remote_video.setAttribute("playsinline", "playsinline");
     remote_videos.appendChild(remote_video);
     pc.onRemoteTrack = (streams) => {
       remote_video.srcObject = streams[0];

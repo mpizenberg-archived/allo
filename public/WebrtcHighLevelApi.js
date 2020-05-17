@@ -161,6 +161,7 @@ function PeerConnection(iceConfig, signalingChannel, polite) {
 
   // Handling the negotiationneeded event.
   let makingOffer = false;
+  let ignoreOffer = false;
   pc.onnegotiationneeded = async () => {
     try {
       makingOffer = true;
@@ -180,14 +181,14 @@ function PeerConnection(iceConfig, signalingChannel, polite) {
     signalingChannel.sendIceCandidate(candidate);
 
   // Handling remote session description update.
-  let ignoreOffer = false;
   signalingChannel.onRemoteDescription = async (description) => {
+    if (description == null) return;
     const offerCollision =
       description.type == "offer" &&
       (makingOffer || pc.signalingState != "stable");
     ignoreOffer = !polite && offerCollision;
     if (ignoreOffer) return;
-    if (offerCollision) {
+    if (offerCollision && pc.signalingState != "stable") {
       await Promise.all([
         pc.setLocalDescription({ type: "rollback" }),
         pc.setRemoteDescription(description),
