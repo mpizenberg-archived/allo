@@ -1,6 +1,6 @@
 // Retrieve video and button tags from dom
 const local_video = document.getElementById("local-video");
-const remote_video = document.getElementById("remote-video");
+const remote_videos = document.getElementById("remote-videos");
 const join_button = document.getElementById("join-button");
 const leave_button = document.getElementById("leave-button");
 
@@ -11,7 +11,7 @@ leave_button.onclick = leaveCall;
 // Other global variables
 let local_stream;
 let signalingSocket;
-let pc;
+let pcs = new Map();
 
 // Configuration
 // const stream_config = { audio: true, video: { width: 320, height: 240 } }
@@ -41,16 +41,25 @@ function initSignalingAndPC() {
   signalingSocket = new SignalingSocket(socket_address);
   signalingSocket.onRemotePeerConnected = (chan, polite) => {
     console.log("Peer connected", chan.remotePeerId);
-    pc = new PeerConnection(ice_config, chan, polite);
+    const pc = new PeerConnection(ice_config, chan, polite);
+    pcs.set(chan.remotePeerId, pc);
+    const remote_video = document.createElement("video");
+    remote_video.id = chan.remotePeerId.toString();
+    remote_video.setAttribute("autoplay", "autoplay");
+    remote_video.setAttribute("controls", "controls");
+    remote_videos.appendChild(remote_video);
     pc.onRemoteTrack = (streams) => {
       remote_video.srcObject = streams[0];
     };
     pc.setLocalStream(local_stream);
   };
   signalingSocket.onRemotePeerDisconnected = (remotePeerId) => {
+    const pc = pcs.get(remotePeerId);
+    if (pc == undefined) return;
     pc.close();
-    pc = null;
-    remote_video.srcObject = null;
+    pcs.delete(remotePeerId);
+    const remote_video = document.getElementById(remotePeerId);
+    remote_videos.removeChild(remote_video);
   };
 }
 
@@ -68,9 +77,9 @@ function leaveCall() {
   join_button.disabled = false;
   leave_button.disabled = true;
   signalingSocket.leave();
-  if (pc != null) {
+  for (let pc of pcs.values()) {
     pc.close();
-    pc = null;
   }
-  remote_video.srcObject = null;
+  pcs.clear();
+  remote_videos.textContent = "";
 }
