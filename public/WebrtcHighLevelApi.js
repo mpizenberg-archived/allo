@@ -43,7 +43,13 @@ function SignalingSocket(socketAddress) {
     } else if (socket.readyState == 0) {
       // 0 = CONNECTING
       socket.onopen = sendJoin;
+    } else {
+      console.error("OOPS socket in state:", socket.readyState);
     }
+  };
+
+  socket.onclose = (event) => {
+    console.error("OOPS socket closed", event);
   };
 
   // Inform others that we are leaving.
