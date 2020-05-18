@@ -23,9 +23,7 @@ const stream_config = {
   video: { facingMode: "user", frameRate: 15, width: 320, height: 240 },
 };
 const socket_address = "wss://" + window.location.host;
-// const ice_config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
-const hostname = window.location.hostname;
-const ice_config = { iceServers: [{ urls: "stun:" + hostname + ":3478" }] };
+const ice_config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 
 // INIT ##############################################################
 
