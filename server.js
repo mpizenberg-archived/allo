@@ -3,7 +3,7 @@ const fs = require("fs");
 const express = require("express");
 const WebSocket = require("ws");
 
-const port = 8443;
+const PORT = process.env.PORT || 8443;
 // const credentials = {
 //   key: fs.readFileSync("server.pem"),
 //   cert: fs.readFileSync("server.pem"),
@@ -75,5 +75,5 @@ function sendJsonMsg(ws, msgType, remotePeerId, extra = {}) {
   ws.send(JSON.stringify(msg));
 }
 
-console.log("Listening at localhost:" + port);
-httpServer.listen(port);
+console.log("Listening at localhost:" + PORT);
+httpServer.listen(PORT);
